@@ -1,8 +1,9 @@
 [package]
 name = "moon-dancer"
-version = "0.2.2"
+version = "0.2.4"
 description = "Diário, notas e memórias local-first"
 authors = ["Kauany Santos (Aykolin)"]
+license-file = "../LICENSE"
 edition = "2021"
 
 [lib]

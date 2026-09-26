@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
   import Icon from "./Icon.svelte";
   import { isDesktopRuntime } from "../lib/desktop";
   import { language, pick } from "../lib/i18n";
@@ -7,16 +9,25 @@
 
   async function controlWindow(action: "minimize" | "maximize" | "close") {
     if (!isDesktopRuntime()) return;
-    const { getCurrentWindow } = await import("@tauri-apps/api/window");
-    const window = getCurrentWindow();
-    if (action === "minimize") await window.minimize();
-    else if (action === "maximize") await window.toggleMaximize();
-    else await window.close();
+    const appWindow = getCurrentWindow();
+    if (action === "minimize") await appWindow.minimize();
+    else if (action === "maximize") await appWindow.toggleMaximize();
+    else await appWindow.close();
   }
+
+  async function startDragging(event: MouseEvent) {
+    if (!isDesktopRuntime() || event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("button, a, input, select, textarea")) return;
+    event.preventDefault();
+    await invoke("start_window_drag");
+  }
+
 </script>
 
 <section class="window-frame">
-  <header class="titlebar" data-tauri-drag-region>
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <header class="titlebar" role="banner" onmousedown={startDragging}>
     <span class="title-icon"><Icon name="sparkle" size={17} /></span>
     <strong>{title} - Moon Dancer</strong>
     <div class="window-controls">

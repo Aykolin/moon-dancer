@@ -656,6 +656,87 @@ input, select { min-height: 38px; padding: 7px 10px; }
   .theme-grid { grid-template-columns: 1fr; }
 }
 
+/* Responsive desktop window */
+@media (max-width: 900px) {
+  .desktop-shell,
+  .theme-night .desktop-shell,
+  .theme-pastel .desktop-shell,
+  .theme-white .desktop-shell,
+  .theme-rose .desktop-shell,
+  .theme-latte .desktop-shell {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .sidebar { padding-inline: 8px; }
+  .sidebar-brand { justify-content: center; padding-inline: 0; }
+  .sidebar-brand span,
+  .sidebar nav button > span:last-child,
+  .sidebar-version { display: none; }
+  .sidebar nav button { justify-content: center; padding-inline: 4px; }
+  .nav-icon { flex-basis: 30px; width: 30px; height: 30px; }
+
+  .hero-panel { grid-template-columns: minmax(0, 1fr) minmax(165px, .52fr); }
+  .hero-copy { padding: 28px; }
+  .home-grid { grid-template-columns: 1fr; }
+  .status-card { grid-template-columns: auto minmax(0, 1fr) auto; }
+
+  .notes-layout { grid-template-columns: 126px minmax(170px, 34%) minmax(0, 1fr); }
+  .editor-pane { padding: 16px; }
+
+  .calendar-layout { grid-template-columns: minmax(0, 1fr); }
+  .lunar-detail { min-height: 280px; }
+  .backup-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .desktop-shell,
+  .theme-night .desktop-shell,
+  .theme-pastel .desktop-shell,
+  .theme-white .desktop-shell,
+  .theme-rose .desktop-shell,
+  .theme-latte .desktop-shell {
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .sidebar { padding-inline: 6px; }
+  .sidebar-brand img { width: 36px; height: 36px; }
+
+  .hero-panel { grid-template-columns: 1fr; min-height: 0; }
+  .hero-copy { padding: 24px; }
+  .moon-scene { display: none; }
+
+  .split-screen { grid-template-columns: 1fr; grid-template-rows: minmax(150px, 30vh) minmax(0, 1fr); }
+  .item-list { border-right: 0; border-bottom: 1px solid var(--ctp-surface-1); }
+
+  .notes-layout { grid-template-columns: 104px minmax(155px, 34%) minmax(0, 1fr); }
+  .category-list button { padding-inline: 6px; font-size: .7rem; }
+  .note-list .list-item { padding-inline: 8px; }
+  .editor-pane { padding: 12px; }
+
+  .calendar-layout,
+  .home-screen,
+  .memories-screen,
+  .backup-screen,
+  .settings-screen { padding: 14px; }
+  .calendar-panel { min-width: 0; padding: 10px; }
+  .calendar-grid button { min-height: 58px; padding: 5px 2px; }
+  .calendar-grid .day-moon img { width: 24px; height: 24px; }
+  .calendar-toolbar { flex-wrap: wrap; }
+  .theme-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-height: 600px) {
+  .sidebar-brand { min-height: 50px; padding-bottom: 8px; }
+  .sidebar nav { gap: 2px; margin-top: 8px; }
+  .sidebar nav button { min-height: 37px; padding-block: 4px; }
+  .home-screen,
+  .memories-screen,
+  .backup-screen,
+  .settings-screen { padding-block: 14px; }
+}
+
 /* Latte final layer */
 .app.theme-latte:not(.desktop-runtime) { background: radial-gradient(circle at 88% 8%, rgba(234,118,203,.15), transparent 28%), radial-gradient(circle at 8% 92%, rgba(30,102,245,.09), transparent 30%), var(--ctp-crust); }
 .theme-latte .sidebar { border-color: var(--ctp-mauve); background: rgba(239,241,245,.98); box-shadow: 7px 7px 0 rgba(136,57,239,.14); }
@@ -1423,3 +1504,75 @@ html, body, #app { background: transparent !important; }
   }
   .theme-grid { grid-template-columns: 1fr; }
 }
+
+/* Final native-size override: the app frame stays inside the available window. */
+@media (max-width: 760px) {
+  body { overflow: hidden; }
+
+  .desktop-shell,
+  .theme-night .desktop-shell,
+  .theme-pastel .desktop-shell,
+  .theme-white .desktop-shell,
+  .theme-rose .desktop-shell,
+  .theme-latte .desktop-shell {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr);
+    gap: 8px;
+    width: calc(100% - 16px);
+    height: calc(100vh - 16px);
+    min-height: 0;
+    margin: 8px;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    order: initial;
+    position: relative;
+    bottom: auto;
+    min-height: 0;
+    padding: 8px 6px;
+  }
+
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-top: 8px;
+    overflow: auto;
+  }
+
+  .sidebar nav button {
+    display: grid;
+    justify-items: center;
+    min-height: 42px;
+    padding: 5px 2px;
+  }
+
+  .window-frame { min-height: 0; }
+  .window-content { min-width: 0; overflow: auto; }
+}
+
+/* Native frameless-window resize hit areas. */
+.window-frame { position: relative; }
+.resize-handle {
+  position: fixed;
+  z-index: 50;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  opacity: 0;
+  background: transparent;
+}
+.resize-handle.north { top: 0; right: 10px; left: 10px; height: 7px; cursor: n-resize; }
+.resize-handle.north-east { top: 0; right: 0; width: 12px; height: 12px; cursor: ne-resize; }
+.resize-handle.east { top: 10px; right: 0; bottom: 10px; width: 7px; cursor: e-resize; }
+.resize-handle.south-east { right: 0; bottom: 0; width: 12px; height: 12px; cursor: se-resize; }
+.resize-handle.south { right: 10px; bottom: 0; left: 10px; height: 7px; cursor: s-resize; }
+.resize-handle.south-west { bottom: 0; left: 0; width: 12px; height: 12px; cursor: sw-resize; }
+.resize-handle.west { top: 10px; bottom: 10px; left: 0; width: 7px; cursor: w-resize; }
+.resize-handle.north-west { top: 0; left: 0; width: 12px; height: 12px; cursor: nw-resize; }

@@ -3,5 +3,13 @@
   "identifier": "default",
   "description": "Permissões da janela principal do Moon Dancer",
   "windows": ["main", "mascot"],
-  "permissions": ["core:default", "dialog:default"]
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging",
+    "dialog:default"
+  ]
 }

@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
   import { onMount } from "svelte";
   import Icon from "./components/Icon.svelte";
-  import { hideMascot, openMainWindow, quitMoonDancer, setMascotExpanded } from "./lib/desktop";
+  import { hideMascot, isDesktopRuntime, openMainWindow, quitMoonDancer, setMascotExpanded } from "./lib/desktop";
   import { loadSettings } from "./lib/settings";
   import type { ScreenId, ThemeId } from "./lib/types";
 
@@ -10,6 +11,11 @@
   let panel = $state<Panel>("closed");
   let theme = $state<ThemeId>(loadSettings().theme);
   let closingTimer: ReturnType<typeof setTimeout> | undefined;
+  let dragResetTimer: ReturnType<typeof setTimeout> | undefined;
+  let pointerId: number | undefined;
+  let pointerOrigin: { x: number; y: number } | undefined;
+  let nativeDragStarted = false;
+  let suppressActivation = false;
 
   const shortcuts: { id: ScreenId; label: string; icon: string; direction: string }[] = [
     { id: "journal", label: "Diário", icon: "journal", direction: "left" },
@@ -42,9 +48,49 @@
     void showPanel("context");
   }
 
-  onMount(() => {
-    document.body.classList.add("mascot-body");
+  function prepareMascotDrag(event: PointerEvent) {
+    if (event.button !== 0) return;
+    pointerId = event.pointerId;
+    pointerOrigin = { x: event.screenX, y: event.screenY };
+    nativeDragStarted = false;
+    (event.currentTarget as HTMLButtonElement).setPointerCapture(event.pointerId);
+  }
 
+  async function moveMascot(event: PointerEvent) {
+    if (event.pointerId !== pointerId || !pointerOrigin || nativeDragStarted) return;
+    const distance = Math.hypot(event.screenX - pointerOrigin.x, event.screenY - pointerOrigin.y);
+    if (distance < 5 || !isDesktopRuntime()) return;
+    nativeDragStarted = true;
+    suppressActivation = true;
+    event.preventDefault();
+    const target = event.currentTarget as HTMLButtonElement;
+    if (target.hasPointerCapture(event.pointerId)) {
+      target.releasePointerCapture(event.pointerId);
+    }
+    await invoke("start_window_drag");
+    if (dragResetTimer) clearTimeout(dragResetTimer);
+    dragResetTimer = setTimeout(() => {
+      suppressActivation = false;
+    }, 250);
+  }
+
+  function finishMascotPointer(event: PointerEvent) {
+    if (event.pointerId !== pointerId) return;
+    pointerId = undefined;
+    pointerOrigin = undefined;
+    nativeDragStarted = false;
+  }
+
+  function activateMascot() {
+    if (suppressActivation) {
+      suppressActivation = false;
+      if (dragResetTimer) clearTimeout(dragResetTimer);
+      return;
+    }
+    void showPanel("shortcuts");
+  }
+
+  onMount(() => {
     function refreshTheme() {
       theme = loadSettings().theme;
     }
@@ -56,10 +102,10 @@
     window.addEventListener("storage", refreshTheme);
     window.addEventListener("keydown", escape);
     return () => {
-      document.body.classList.remove("mascot-body");
       window.removeEventListener("storage", refreshTheme);
       window.removeEventListener("keydown", escape);
       if (closingTimer) clearTimeout(closingTimer);
+      if (dragResetTimer) clearTimeout(dragResetTimer);
     };
   });
 </script>
@@ -96,17 +142,28 @@
     class="mascot"
     aria-label={panel === "shortcuts" ? "Fechar atalhos" : "Abrir atalhos do mascote"}
     aria-expanded={panel === "shortcuts"}
-    onclick={() => void showPanel("shortcuts")}
+    onclick={activateMascot}
+    onpointerdown={prepareMascotDrag}
+    onpointermove={moveMascot}
+    onpointerup={finishMascotPointer}
+    onpointercancel={finishMascotPointer}
     oncontextmenu={openContext}
   >
-    <img src="/mascot/moon-dancer-mascot.png" alt="" />
+    <img src="/mascot/moon-dancer-mascot.png" alt="" draggable="false" />
     <span>{panel === "context" ? "Menu" : panel === "shortcuts" ? "Fechar" : "Atalhos"}</span>
   </button>
 </div>
 
 <style>
-  :global(html), :global(body), :global(#app) { background: transparent !important; }
-  :global(body.mascot-body) { overflow: hidden; user-select: none; }
+  :global(html.mascot-root), :global(body.mascot-body), :global(body.mascot-body #app) {
+    width: 100%;
+    min-width: 0 !important;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: transparent !important;
+  }
+  :global(body.mascot-body) { user-select: none; }
 
   .mascot-stage {
     --ink: #cdd6f4;
@@ -118,6 +175,8 @@
     position: relative;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
+    background: transparent !important;
     color: var(--ink);
     font-family: "Pixelify Sans", sans-serif;
   }
@@ -146,11 +205,12 @@
     border: 0;
     border-radius: 50%;
     background: transparent;
-    cursor: pointer;
+    cursor: grab;
     transform: translate(-50%, -50%);
     filter: drop-shadow(0 8px 12px rgba(20, 14, 35, .34));
     transition: transform .18s ease, filter .18s ease;
   }
+  .mascot:active { cursor: grabbing; }
 
   .expanded .mascot { top: auto; bottom: 8px; transform: translateX(-50%); }
   .mascot:hover { transform: translate(-50%, -53%) scale(1.04); }

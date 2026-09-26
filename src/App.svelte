@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount } from "svelte";
   import LockScreen from "./components/LockScreen.svelte";
   import Icon from "./components/Icon.svelte";
@@ -19,6 +20,8 @@
   import NotesScreen from "./screens/NotesScreen.svelte";
   import SettingsScreen from "./screens/SettingsScreen.svelte";
 
+  type ResizeDirection = "East" | "North" | "NorthEast" | "NorthWest" | "South" | "SouthEast" | "SouthWest" | "West";
+
   const initialSettings = loadSettings();
   setLanguage(initialSettings.language);
   const desktopRuntime = isDesktopRuntime();
@@ -32,6 +35,16 @@
   let journalDate = $state("");
   let journalId = $state("");
   let noteId = $state("");
+  const resizeHandles = [
+    { direction: "North", className: "north" },
+    { direction: "NorthEast", className: "north-east" },
+    { direction: "East", className: "east" },
+    { direction: "SouthEast", className: "south-east" },
+    { direction: "South", className: "south" },
+    { direction: "SouthWest", className: "south-west" },
+    { direction: "West", className: "west" },
+    { direction: "NorthWest", className: "north-west" },
+  ] as const;
 
   const titles: Record<ScreenId, [string, string]> = {
     home: ["Início", "Home"], journal: ["Diário", "Journal"], notes: ["Notas", "Notes"],
@@ -134,6 +147,13 @@
     if (valid) locked = false;
     return valid;
   }
+
+  async function startResizing(event: MouseEvent, direction: ResizeDirection) {
+    if (!desktopRuntime || event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    await getCurrentWindow().startResizeDragging(direction);
+  }
 </script>
 
 {#if locked}
@@ -166,4 +186,16 @@
     </main>
     {#if !desktopRuntime && settings.mascotEnabled}<MascotMenu active={screen} onNavigate={navigate} />{/if}
   </div>
+{/if}
+
+{#if desktopRuntime}
+  {#each resizeHandles as handle}
+    <button
+      type="button"
+      tabindex="-1"
+      class={`resize-handle ${handle.className}`}
+      aria-label={pick(settings.language, "Redimensionar janela", "Resize window")}
+      onmousedown={(event) => startResizing(event, handle.direction)}
+    ></button>
+  {/each}
 {/if}

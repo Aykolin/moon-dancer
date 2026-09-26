@@ -10,7 +10,7 @@
 
 Moon Dancer is a desktop application for journaling, organizing notes, revisiting memories, and following the lunar cycle. It requires no account and stores personal content locally on the user's computer.
 
-> **Project status:** Active development. Ready-to-install packages are distributed through [GitHub Releases](https://github.com/Aykolin/moon-dancer/releases).
+> **Project status:** Active development. Moon Dancer is proprietary, source-available software. Ready-to-install packages are distributed through [GitHub Releases](https://github.com/Aykolin/moon-dancer/releases).
 
 ## Features
 
@@ -129,6 +129,14 @@ Create a native production build with:
 pnpm tauri build
 ```
 
+On Windows, run the local verification and generate both installer formats with:
+
+```powershell
+pnpm desktop:build:windows
+```
+
+This command checks the required Windows toolchain, runs the project diagnostics and tests, and creates unsigned NSIS and MSI installers for local testing. It does not create a commit, tag, or GitHub Release.
+
 Generated packages are written to:
 
 ```text
@@ -201,15 +209,11 @@ pnpm build
 
 The test suite covers lunar calculations, calendar generation, backup validation, preferences, and PIN verification.
 
-## Contributing
+## Contributions
 
-1. Fork the repository.
-2. Create a branch from `main`.
-3. Keep changes focused and consistent with the existing design.
-4. Run the checks listed in the testing section.
-5. Open a pull request describing the change and how it was verified.
+External code contributions are not currently accepted. Issues may be used to report bugs or suggest improvements, but the project owner retains sole control over the source code and repository.
 
-Do not commit generated directories, local databases, or backup files. The existing `.gitignore` excludes the main generated and personal-data artifacts.
+Do not redistribute, modify, relicense, or reuse the source code without prior written permission from the owner.
 
 ## Author
 
@@ -219,4 +223,8 @@ Created by **Kauany Santos**, also known as **Aykolin**.
 
 ## License
 
-Open source.
+Copyright © 2026 Kauany Santos (Aykolin). All rights reserved.
+
+Moon Dancer is proprietary, source-available software. Public access to this repository does not grant permission to copy, modify, redistribute, sublicense, sell, relicense, or create derivative works from the source code, artwork, interface, documentation, or project identity.
+
+Official compiled releases may be used for personal, non-commercial purposes. See the [LICENSE](LICENSE) file for the complete terms.
