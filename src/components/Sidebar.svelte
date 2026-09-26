@@ -2,6 +2,7 @@
   import Icon from "./Icon.svelte";
   import { language, pick } from "../lib/i18n";
   import type { ScreenId } from "../lib/types";
+  import { APP_VERSION } from "../lib/version";
 
   let {
     active,
@@ -36,4 +37,5 @@
       </button>
     {/each}
   </nav>
+  <span class="sidebar-version">MOON DANCER {APP_VERSION}</span>
 </aside>

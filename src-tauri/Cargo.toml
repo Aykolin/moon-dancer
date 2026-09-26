@@ -1,6 +1,6 @@
 [package]
 name = "moon-dancer"
-version = "0.2.0"
+version = "0.2.1"
 description = "Diário, notas e memórias local-first"
 authors = ["Kauany Santos (Aykolin)"]
 edition = "2021"

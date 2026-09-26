@@ -4,6 +4,7 @@
   import { digestPin } from "../lib/settings";
   import { language, pick } from "../lib/i18n";
   import type { AppSettings, ThemeId } from "../lib/types";
+  import { APP_VERSION } from "../lib/version";
 
   let {
     settings,
@@ -106,7 +107,7 @@
     <img src="/brand/moon-dancer-icon-transparent.png" alt="" />
     <div>
       <h2>Moon Dancer</h2>
-      <p>{pick($language, "Versão", "Version")} 0.2.0</p>
+      <p>{pick($language, "Versão", "Version")} {APP_VERSION}</p>
       <p class="creator-credit">{pick($language, "Criado por", "Created by")} <strong>{creatorMark.creator}</strong></p>
       <a class="creator-link" href={creatorMark.profile} target="_blank" rel="noreferrer">
         <Icon name="external-link" size={15} /> github.com/{creatorMark.handle}

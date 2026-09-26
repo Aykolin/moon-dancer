@@ -994,8 +994,8 @@ body { color: #cdd6f4; }
   clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
 }
 
-.sidebar::after {
-  content: "MOON DANCER 0.2";
+.sidebar-version {
+  display: block;
   margin: auto 7px 2px;
   padding-top: 12px;
   border-top: 1px solid var(--ctp-surface-1);

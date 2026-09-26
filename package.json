@@ -1,7 +1,7 @@
 {
   "name": "moon-dancer",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Kauany Santos (Aykolin)",
   "buildProvenance": "4d442d41796b6f6c696e",
   "type": "module",

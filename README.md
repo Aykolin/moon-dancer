@@ -10,7 +10,7 @@
 
 Moon Dancer is a desktop application for journaling, organizing notes, revisiting memories, and following the lunar cycle. It requires no account and stores personal content locally on the user's computer.
 
-> **Project status:** Active development. The source code is ready for desktop builds, but precompiled installers are not currently included in the repository.
+> **Project status:** Active development. Ready-to-install packages are distributed through [GitHub Releases](https://github.com/Aykolin/moon-dancer/releases).
 
 ## Features
 
@@ -109,13 +109,15 @@ End users do not need Node.js, Rust, or the source code. Download the ready-to-i
 - Windows: use the `.exe` installer. An `.msi` package is also provided.
 - Linux: use the portable `.AppImage` or the `.deb` package for Debian-based distributions.
 
-The workflow in `.github/workflows/release.yml` builds Windows and Linux packages on their native GitHub runners. To publish a version:
+The workflow in `.github/workflows/release.yml` builds Windows and Linux packages on their native GitHub runners. It does not create commits or change the project source. To publish a version:
 
 1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`.
-2. Push the source to GitHub.
-3. Open **Actions → Build desktop installers → Run workflow**, or push a tag such as `v0.2.0`.
-4. Wait for both platform jobs to finish.
-5. Open the draft under **Releases**, review its assets, and publish it.
+2. Review the changes, create your release commit, and push it to GitHub.
+3. Create and push the matching tag, such as `v0.3.0` for application version `0.3.0`.
+4. Wait for the **Build desktop installers** workflow to finish.
+5. The completed release and its Windows and Linux downloads are published automatically.
+
+The workflow verifies that all three version fields and the Git tag match before building. If either platform fails, the release remains unpublished so users do not receive an incomplete version.
 
 The `executables/` directory documents the expected packages and can hold private or offline copies. Generated binaries are ignored by Git and should normally remain attached to GitHub Releases.
 

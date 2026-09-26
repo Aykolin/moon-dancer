@@ -1,4 +1,5 @@
 import type { AppSnapshot, JournalEntry, Note } from "./types";
+import { APP_VERSION } from "./version";
 
 interface BackupEnvelope {
   manifest: {
@@ -33,7 +34,7 @@ export function createBackupEnvelope(snapshot: AppSnapshot, createdAt = new Date
     manifest: {
       format: "moonbackup",
       formatVersion: 1,
-      appVersion: "0.2.0",
+      appVersion: APP_VERSION,
       createdAt,
       databaseSchema: 1,
       encrypted: false,

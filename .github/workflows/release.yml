@@ -27,6 +27,24 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Verify release version
+        env:
+          GIT_REF_NAME: ${{ github.ref_name }}
+          GIT_REF_TYPE: ${{ github.ref_type }}
+        shell: pwsh
+        run: |
+          $packageVersion = (Get-Content package.json | ConvertFrom-Json).version
+          $tauriVersion = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          $cargoVersion = (Select-String -Path src-tauri/Cargo.toml -Pattern '^version = "([^"]+)"' | Select-Object -First 1).Matches.Groups[1].Value
+
+          if ($packageVersion -ne $tauriVersion -or $packageVersion -ne $cargoVersion) {
+            throw "Version mismatch: package.json=$packageVersion, tauri.conf.json=$tauriVersion, Cargo.toml=$cargoVersion"
+          }
+
+          if ($env:GIT_REF_TYPE -eq 'tag' -and $env:GIT_REF_NAME -ne "v$packageVersion") {
+            throw "Tag $env:GIT_REF_NAME does not match application version v$packageVersion"
+          }
+
       - name: Install Linux system dependencies
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -61,7 +79,7 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Build installers and publish release
+      - name: Build installers and create release
         uses: tauri-apps/tauri-action@action-v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -76,4 +94,25 @@ jobs:
           releaseDraft: true
           prerelease: false
           generateReleaseNotes: true
+
+  publish:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Read release version
+        id: release
+        shell: bash
+        run: echo "tag=v$(node -p \"require('./src-tauri/tauri.conf.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - name: Publish completed release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        shell: bash
+        run: gh release edit "$RELEASE_TAG" --draft=false --latest
 
