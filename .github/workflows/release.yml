@@ -128,8 +128,10 @@ jobs:
 
       - name: Read release version
         id: release
-        shell: bash
-        run: echo "tag=v$(node -p \"require('./src-tauri/tauri.conf.json').version\")" >> "$GITHUB_OUTPUT"
+        shell: pwsh
+        run: |
+          $version = (Get-Content src-tauri/tauri.conf.json | ConvertFrom-Json).version
+          "tag=v$version" >> $env:GITHUB_OUTPUT
 
       - name: Publish completed release
         env:
