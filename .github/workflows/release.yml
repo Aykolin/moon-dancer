@@ -45,6 +45,27 @@ jobs:
             throw "Tag $env:GIT_REF_NAME does not match application version v$packageVersion"
           }
 
+      - name: Verify desktop icons
+        shell: pwsh
+        run: |
+          $requiredIcons = @(
+            'src-tauri/icons/32x32.png',
+            'src-tauri/icons/128x128.png',
+            'src-tauri/icons/128x128@2x.png',
+            'src-tauri/icons/icon.ico'
+          )
+
+          foreach ($icon in $requiredIcons) {
+            if (-not (Test-Path -LiteralPath $icon -PathType Leaf)) {
+              throw "Required desktop icon is missing: $icon"
+            }
+          }
+
+          $icoHeader = [System.IO.File]::ReadAllBytes('src-tauri/icons/icon.ico')
+          if ($icoHeader.Length -lt 4 -or $icoHeader[0] -ne 0 -or $icoHeader[1] -ne 0 -or $icoHeader[2] -ne 1 -or $icoHeader[3] -ne 0) {
+            throw 'src-tauri/icons/icon.ico is not a valid Windows icon file'
+          }
+
       - name: Install Linux system dependencies
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -94,6 +115,7 @@ jobs:
           releaseDraft: true
           prerelease: false
           generateReleaseNotes: true
+          retryAttempts: 2
 
   publish:
     name: Publish release

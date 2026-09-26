@@ -1,7 +1,7 @@
 {
   "name": "moon-dancer",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Kauany Santos (Aykolin)",
   "buildProvenance": "4d442d41796b6f6c696e",
   "type": "module",
@@ -14,13 +14,13 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/api": "^2.12.0",
     "@tauri-apps/plugin-dialog": "^2.4.0",
     "svelte": "^5.38.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^6.1.0",
-    "@tauri-apps/cli": "^2.8.0",
+    "@tauri-apps/cli": "^2.12.0",
     "@tsconfig/svelte": "^5.0.5",
     "svelte-check": "^4.3.1",
     "typescript": "^5.9.2",
