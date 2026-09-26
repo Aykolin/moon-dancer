@@ -190,5 +190,5 @@ Created by **Kauany Santos**, also known as **Aykolin**.
 
 ## License
 
-No project license has been published yet. Until a license is added, the source code remains protected by default copyright rules and cannot be assumed to be open source.
+Open source.
 
