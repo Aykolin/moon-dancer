@@ -2,6 +2,6 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Permissões da janela principal do Moon Dancer",
-  "windows": ["main"],
+  "windows": ["main", "mascot"],
   "permissions": ["core:default", "dialog:default"]
 }

@@ -33,7 +33,7 @@ export function createBackupEnvelope(snapshot: AppSnapshot, createdAt = new Date
     manifest: {
       format: "moonbackup",
       formatVersion: 1,
-      appVersion: "0.1.0",
+      appVersion: "0.2.0",
       createdAt,
       databaseSchema: 1,
       encrypted: false,

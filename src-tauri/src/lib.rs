@@ -4,9 +4,15 @@ use std::{
     fs,
     io::{Read, Write},
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Mutex,
+    },
 };
-use tauri::{Manager, State};
+use tauri::{
+    AppHandle, Emitter, LogicalSize, Manager, PhysicalPosition, Position, Size, State,
+    WebviewWindow, WindowEvent,
+};
 use zip::{write::SimpleFileOptions, ZipArchive, ZipWriter};
 
 #[allow(dead_code)]
@@ -16,6 +22,11 @@ struct AppState {
     db: Mutex<Connection>,
     db_path: PathBuf,
     data_dir: PathBuf,
+}
+
+struct MascotRuntime {
+    enabled: AtomicBool,
+    hidden: AtomicBool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -107,6 +118,122 @@ fn open_database(path: &Path) -> Result<Connection, String> {
         )
         .map_err(|error| error.to_string())?;
     Ok(connection)
+}
+
+fn mascot_enabled_from_database(connection: &Connection) -> bool {
+    connection
+        .query_row(
+            "SELECT value FROM app_settings WHERE key='mascotEnabled'",
+            [],
+            |row| row.get::<_, String>(0),
+        )
+        .map(|value| value != "0")
+        .unwrap_or(true)
+}
+
+fn position_mascot(window: &WebviewWindow, expanded: bool) -> Result<(), String> {
+    let monitor = window
+        .current_monitor()
+        .map_err(|error| error.to_string())?
+        .or_else(|| window.primary_monitor().ok().flatten())
+        .ok_or_else(|| "Não foi possível localizar o monitor principal.".to_string())?;
+    let scale = monitor.scale_factor();
+    let (width, height, center_x, center_y) = if expanded {
+        (360.0, 280.0, 180.0, 218.0)
+    } else {
+        (128.0, 128.0, 64.0, 64.0)
+    };
+
+    window
+        .set_size(Size::Logical(LogicalSize::new(width, height)))
+        .map_err(|error| error.to_string())?;
+
+    let work_area = monitor.work_area();
+    let anchor_x = work_area.position.x + work_area.size.width as i32 - (180.0 * scale) as i32;
+    let anchor_y = work_area.position.y + work_area.size.height as i32 - (72.0 * scale) as i32;
+    let left = anchor_x - (center_x * scale) as i32;
+    let top = anchor_y - (center_y * scale) as i32;
+
+    window
+        .set_position(Position::Physical(PhysicalPosition::new(left, top)))
+        .map_err(|error| error.to_string())?;
+    Ok(())
+}
+
+fn show_mascot(app: &AppHandle) -> Result<(), String> {
+    let window = app
+        .get_webview_window("mascot")
+        .ok_or_else(|| "A janela do mascote não está disponível.".to_string())?;
+    position_mascot(&window, false)?;
+    window.show().map_err(|error| error.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+fn set_mascot_enabled(
+    app: AppHandle,
+    state: State<AppState>,
+    mascot: State<MascotRuntime>,
+    enabled: bool,
+) -> Result<(), String> {
+    {
+        let connection = state.db.lock().map_err(|error| error.to_string())?;
+        connection
+            .execute(
+                "INSERT INTO app_settings(key, value, updated_at) VALUES ('mascotEnabled', ?1, datetime('now'))
+                 ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at",
+                [if enabled { "1" } else { "0" }],
+            )
+            .map_err(|error| error.to_string())?;
+    }
+
+    mascot.enabled.store(enabled, Ordering::Relaxed);
+    mascot.hidden.store(!enabled, Ordering::Relaxed);
+    if enabled {
+        show_mascot(&app)
+    } else if let Some(window) = app.get_webview_window("mascot") {
+        window.hide().map_err(|error| error.to_string())
+    } else {
+        Ok(())
+    }
+}
+
+#[tauri::command]
+fn set_mascot_expanded(app: AppHandle, expanded: bool) -> Result<(), String> {
+    let window = app
+        .get_webview_window("mascot")
+        .ok_or_else(|| "A janela do mascote não está disponível.".to_string())?;
+    position_mascot(&window, expanded)
+}
+
+#[tauri::command]
+fn open_main_window(app: AppHandle, screen: String) -> Result<(), String> {
+    let allowed = ["home", "journal", "notes", "calendar", "memories", "backup", "settings"];
+    if !allowed.contains(&screen.as_str()) {
+        return Err("A tela solicitada não existe.".into());
+    }
+    let window = app
+        .get_webview_window("main")
+        .ok_or_else(|| "A janela principal não está disponível.".to_string())?;
+    window.show().map_err(|error| error.to_string())?;
+    let _ = window.unminimize();
+    window.set_focus().map_err(|error| error.to_string())?;
+    window.emit("navigate", screen).map_err(|error| error.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
+fn hide_mascot(app: AppHandle, mascot: State<MascotRuntime>) -> Result<(), String> {
+    mascot.hidden.store(true, Ordering::Relaxed);
+    if let Some(window) = app.get_webview_window("mascot") {
+        window.hide().map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+#[tauri::command]
+fn quit_moon_dancer(app: AppHandle) {
+    app.exit(0);
 }
 
 fn excerpt(value: &str) -> String {
@@ -348,8 +475,39 @@ pub fn run() {
             fs::create_dir_all(&data_dir)?;
             let db_path = data_dir.join("moon-dancer.sqlite");
             let connection = open_database(&db_path).map_err(std::io::Error::other)?;
+            let mascot_enabled = mascot_enabled_from_database(&connection);
             app.manage(AppState { db: Mutex::new(connection), db_path, data_dir });
+            app.manage(MascotRuntime {
+                enabled: AtomicBool::new(mascot_enabled),
+                hidden: AtomicBool::new(!mascot_enabled),
+            });
+            if mascot_enabled {
+                show_mascot(app.handle()).map_err(std::io::Error::other)?;
+            }
             Ok(())
+        })
+        .on_window_event(|window, event| {
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                if window.label() == "main" {
+                    let app = window.app_handle();
+                    let mascot = app.state::<MascotRuntime>();
+                    if mascot.enabled.load(Ordering::Relaxed) {
+                        api.prevent_close();
+                        let _ = window.hide();
+                        if !mascot.hidden.load(Ordering::Relaxed) {
+                            let _ = show_mascot(app);
+                        }
+                    } else {
+                        app.exit(0);
+                    }
+                } else if window.label() == "mascot" {
+                    api.prevent_close();
+                    let app = window.app_handle();
+                    let mascot = app.state::<MascotRuntime>();
+                    mascot.hidden.store(true, Ordering::Relaxed);
+                    let _ = window.hide();
+                }
+            }
         })
         .invoke_handler(tauri::generate_handler![
             list_journal_entries,
@@ -360,7 +518,12 @@ pub fn run() {
             delete_note,
             search_entries,
             create_backup,
-            restore_backup
+            restore_backup,
+            set_mascot_enabled,
+            set_mascot_expanded,
+            open_main_window,
+            hide_mascot,
+            quit_moon_dancer
         ])
         .run(tauri::generate_context!())
         .expect("não foi possível iniciar o Moon Dancer");

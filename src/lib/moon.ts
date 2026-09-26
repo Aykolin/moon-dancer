@@ -18,12 +18,24 @@ const phases: MoonPhase[] = [
 const synodicMonth = 29.53058867;
 const referenceNewMoon = Date.UTC(2000, 0, 6, 18, 14);
 
-export function moonPhaseFor(date: Date | string): MoonPhase {
+export function moonPhaseFor(date: Date | string, language: "pt" | "en" = "pt"): MoonPhase {
   const instant = typeof date === "string" ? new Date(`${date}T12:00:00`) : date;
   const days = (instant.getTime() - referenceNewMoon) / 86_400_000;
   const age = ((days % synodicMonth) + synodicMonth) % synodicMonth;
   const index = Math.floor((age / synodicMonth) * 8 + 0.5) % 8;
-  return phases[index];
+  const phase = phases[index];
+  if (language === "pt") return phase;
+  const english: Record<string, [string, string]> = {
+    new: ["New Moon", "The moon begins a new cycle."],
+    "waxing-crescent": ["Waxing Crescent", "A thread of light appears in the sky."],
+    "first-quarter": ["First Quarter", "Half of the lunar disk is illuminated."],
+    "waxing-gibbous": ["Waxing Gibbous", "Light covers almost the entire moon."],
+    full: ["Full Moon", "The lunar disk appears complete."],
+    "waning-gibbous": ["Waning Gibbous", "The light begins to fade."],
+    "last-quarter": ["Last Quarter", "The other half of the disk remains illuminated."],
+    "waning-crescent": ["Waning Crescent", "The cycle is nearing its end."],
+  };
+  return { key: phase.key, name: english[phase.key][0], description: english[phase.key][1] };
 }
 
 export function isoDate(date = new Date()): string {
@@ -31,8 +43,8 @@ export function isoDate(date = new Date()): string {
   return local.toISOString().slice(0, 10);
 }
 
-export function formatLongDate(value: string): string {
-  return new Intl.DateTimeFormat("pt-BR", {
+export function formatLongDate(value: string, language: "pt" | "en" = "pt"): string {
+  return new Intl.DateTimeFormat(language === "en" ? "en-US" : "pt-BR", {
     day: "numeric",
     month: "long",
     year: "numeric",

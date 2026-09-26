@@ -1,0 +1,6 @@
+windows/*.exe
+windows/*.msi
+linux/*.AppImage
+linux/*.deb
+!windows/README.md
+!linux/README.md

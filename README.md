@@ -21,18 +21,21 @@ Moon Dancer is a desktop application for journaling, organizing notes, revisitin
 - Memories from entries written on the same date in previous years.
 - Backup and restore using the `.moonbackup` format.
 - Optional PIN lock for casual access protection.
-- Four themes: Night, Lunar Pastel, White, and Lunar Pink.
+- Five Catppuccin terminal variants: Mocha, Lavender, Lunar Blue, Rose, and the light Latte theme.
+- Frameless floating desktop window with a transparent outer area and functional custom controls.
 - Pixelify Sans typography and custom pixel-art moon phases.
+- Always-on-top pixel-art desktop mascot with radial shortcuts.
+- Right-click mascot menu for hiding the companion or fully exiting the application.
 - Offline operation with no account or external service required.
 
 ## Themes
 
 | Theme | Description |
 | --- | --- |
-| Night (Default) | Plum black, deep purple, and lavender accents. |
-| Lunar Pastel | Rich lavender, violet, and misty pink. |
-| White | Soft white, lunar gray, and subtle lilac accents. |
-| Lunar Pink | Blush pink, soft magenta, and lavender. |
+| Mocha (Default) | Deep base with mauve and pink signal accents. |
+| Mocha Lavender | Lavender-led terminal accents. |
+| Lunar Blue | Blue and teal accents over the Mocha base. |
+| Mocha Rose | Pink and peach accents over the Mocha base. |
 
 ## Technology Stack
 
@@ -101,6 +104,23 @@ The SQLite database is created automatically in the operating system's applicati
 
 ## Building Installers
 
+End users do not need Node.js, Rust, or the source code. Download the ready-to-install package from the repository's **Releases** page:
+
+- Windows: use the `.exe` installer. An `.msi` package is also provided.
+- Linux: use the portable `.AppImage` or the `.deb` package for Debian-based distributions.
+
+The workflow in `.github/workflows/release.yml` builds Windows and Linux packages on their native GitHub runners. To publish a version:
+
+1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`.
+2. Push the source to GitHub.
+3. Open **Actions → Build desktop installers → Run workflow**, or push a tag such as `v0.2.0`.
+4. Wait for both platform jobs to finish.
+5. Open the draft under **Releases**, review its assets, and publish it.
+
+The `executables/` directory documents the expected packages and can hold private or offline copies. Generated binaries are ignored by Git and should normally remain attached to GitHub Releases.
+
+### Local build
+
 Create a native production build with:
 
 ```bash
@@ -113,7 +133,7 @@ Generated packages are written to:
 src-tauri/target/release/bundle/
 ```
 
-Windows builds can produce NSIS (`.exe`) and MSI installers. Linux packages must be built in a compatible Linux environment. Build each platform on its corresponding operating system unless a dedicated cross-compilation workflow is configured.
+Windows builds can produce NSIS (`.exe`) and MSI installers. Linux builds produce AppImage and Debian packages. Build each platform on its corresponding operating system.
 
 Release binaries should be published through the repository's **Releases** page rather than committed directly to the source tree.
 
@@ -126,13 +146,14 @@ src/
   lib/              Calendar, backup, storage, and preferences
 
 src-tauri/
-  src/lib.rs        Native SQLite, search, backup, and restore commands
+  src/lib.rs        Native data services and floating mascot window lifecycle
   capabilities/     Tauri application permissions
 
 static/
   brand/            Application identity assets
   fonts/            Pixelify Sans and its OFL license
   moons/            Pixel-art lunar phase sprites
+  mascot/           Interactive mascot artwork
 
 tests/              Automated tests
 ```
@@ -142,6 +163,12 @@ tests/              Automated tests
 The desktop application stores journal entries and notes in a local SQLite database. The interface does not access the database file directly; operations are handled through native Tauri commands.
 
 The browser development preview uses local storage as a lightweight fallback. Browser data is not automatically migrated to the desktop database.
+
+## Desktop Mascot
+
+The native application keeps the mascot in a small transparent, always-on-top window. Closing the main window hides it while the mascot remains available on the desktop. Click the mascot for Journal, Notes, and Calendar shortcuts, or right-click it to hide only the mascot or exit Moon Dancer completely.
+
+The floating mascot can be disabled from **Settings → Mascot**. When disabled, closing the main window exits the application normally. The regular browser preview displays the mascot inside the application because browser tabs cannot create a system-level transparent companion window.
 
 ## Backup and Restore
 
@@ -191,4 +218,3 @@ Created by **Kauany Santos**, also known as **Aykolin**.
 ## License
 
 Open source.
-

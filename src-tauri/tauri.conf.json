@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Moon Dancer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.moondancer.desktop",
   "build": {
     "beforeDevCommand": "pnpm dev",
@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "Moon Dancer",
         "width": 1260,
         "height": 820,
@@ -19,7 +20,25 @@
         "minHeight": 650,
         "resizable": true,
         "fullscreen": false,
-        "center": true
+        "center": true,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false
+      },
+      {
+        "label": "mascot",
+        "title": "Moon Dancer Mascote",
+        "url": "index.html?window=mascot",
+        "width": 128,
+        "height": 128,
+        "resizable": false,
+        "fullscreen": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "visible": false
       }
     ],
     "security": {

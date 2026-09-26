@@ -7,7 +7,8 @@ export type ScreenId =
   | "backup"
   | "settings";
 
-export type ThemeId = "pastel" | "white" | "night" | "rose";
+export type ThemeId = "pastel" | "white" | "night" | "rose" | "latte";
+export type LanguageId = "pt" | "en";
 
 export interface JournalEntry {
   id: string;
@@ -41,8 +42,10 @@ export interface SearchResult {
 
 export interface AppSettings {
   theme: ThemeId;
+  language: LanguageId;
   reduceMotion: boolean;
   fontScale: number;
+  mascotEnabled: boolean;
   lockEnabled: boolean;
   pinDigest: string;
 }

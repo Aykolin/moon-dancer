@@ -62,6 +62,8 @@
     <circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/>
   {:else if name === "lock"}
     <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
+  {:else if name === "eye-off"}
+    <path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.5 5.3A10.8 10.8 0 0 1 12 5c5.4 0 9 7 9 7a17 17 0 0 1-2.1 3M6.6 6.6C4.3 8.1 3 12 3 12s3.6 7 9 7a9.8 9.8 0 0 0 4-.9"/>
   {:else if name === "trash"}
     <path d="M4.5 7h15M9 3.5h6L16 7H8zM7 7l1 14h8l1-14M10 11v6M14 11v6"/>
   {:else if name === "save"}

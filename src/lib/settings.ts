@@ -4,8 +4,10 @@ const key = "moon-dancer-settings-v1";
 
 export const defaultSettings: AppSettings = {
   theme: "night",
+  language: "pt",
   reduceMotion: false,
   fontScale: 1,
+  mascotEnabled: true,
   lockEnabled: false,
   pinDigest: "",
 };
@@ -14,8 +16,9 @@ export function loadSettings(): AppSettings {
   try {
     const stored = JSON.parse(localStorage.getItem(key) ?? "{}") as Omit<Partial<AppSettings>, "theme"> & { theme?: string };
     const theme = stored.theme === "classic" ? "pastel" : stored.theme;
-    const safeTheme = theme === "pastel" || theme === "white" || theme === "night" || theme === "rose" ? theme : defaultSettings.theme;
-    return { ...defaultSettings, ...stored, theme: safeTheme };
+    const safeTheme = theme === "pastel" || theme === "white" || theme === "night" || theme === "rose" || theme === "latte" ? theme : defaultSettings.theme;
+    const language = stored.language === "en" ? "en" : "pt";
+    return { ...defaultSettings, ...stored, theme: safeTheme, language };
   } catch {
     return { ...defaultSettings };
   }
