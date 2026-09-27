@@ -1,7 +1,7 @@
 [package]
 name = "moon-dancer"
-version = "0.2.4"
-description = "Diário, notas e memórias local-first"
+version = "1.0.0"
+description = "A private, offline-first lunar journal for Windows and Linux"
 authors = ["Kauany Santos (Aykolin)"]
 license-file = "../LICENSE"
 edition = "2021"

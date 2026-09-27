@@ -108,10 +108,20 @@ jobs:
           tagName: v__VERSION__
           releaseName: Moon Dancer v__VERSION__
           releaseBody: |
-            Download the installer for your operating system below.
+            Moon Dancer v__VERSION__ is a private, offline-first lunar journal for Windows and Linux.
 
-            Windows: use the .exe installer. The .msi package is also available for managed installations.
-            Linux: use the .AppImage for a portable launch or the .deb package on Debian and Ubuntu.
+            Highlights:
+            - Journal entries, organized notes, memories, and a lunar calendar
+            - Local SQLite storage with no required account
+            - Backup and restore through the .moonbackup format
+            - Portuguese and English interface options
+            - Catppuccin-inspired themes and a movable desktop mascot
+
+            Downloads:
+            - Windows: use the .exe installer. The .msi package is also available for managed installations.
+            - Linux: use the .AppImage for a portable launch or the .deb package on Debian and Ubuntu.
+
+            Personal content remains on the user's computer. Please review the README and LICENSE before use.
           releaseDraft: true
           prerelease: false
           generateReleaseNotes: true

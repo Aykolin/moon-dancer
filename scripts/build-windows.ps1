@@ -31,8 +31,10 @@ pnpm test
 pnpm tauri build --bundles nsis,msi --no-sign
 
 $bundleDirectory = Join-Path $PSScriptRoot "..\src-tauri\target\release\bundle"
+$tauriConfig = Get-Content (Join-Path $PSScriptRoot "..\src-tauri\tauri.conf.json") | ConvertFrom-Json
+$versionMarker = "_$($tauriConfig.version)_"
 $installers = Get-ChildItem -Path $bundleDirectory -Recurse -File |
-  Where-Object { $_.Extension -in @(".exe", ".msi") }
+  Where-Object { $_.Extension -in @(".exe", ".msi") -and $_.Name.Contains($versionMarker) }
 
 if (-not $installers) {
   throw "A compilacao terminou sem encontrar instaladores Windows."

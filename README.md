@@ -1,205 +1,114 @@
 <p align="center">
-  <img src="static/brand/moon-dancer-icon-transparent.png" width="128" alt="Moon Dancer application icon" />
+  <img src="static/brand/moon-dancer-icon-transparent.png" width="144" alt="Moon Dancer icon: a white cat sleeping on a crescent moon" />
 </p>
 
 <h1 align="center">Moon Dancer</h1>
 
 <p align="center">
-  A private, offline-first lunar journal for Windows and Linux.
+  <strong>A quiet, private space to write, remember, and follow the moon.</strong>
 </p>
 
-Moon Dancer is a desktop application for journaling, organizing notes, revisiting memories, and following the lunar cycle. It requires no account and stores personal content locally on the user's computer.
+<p align="center">
+  <a href="https://github.com/Aykolin/moon-dancer/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Aykolin/moon-dancer?display_name=tag&sort=semver&style=flat-square&color=cba6f7" /></a>
+  <img alt="Windows" src="https://img.shields.io/badge/Windows-10%2B-89b4fa?style=flat-square&logo=windows" />
+  <img alt="Linux" src="https://img.shields.io/badge/Linux-AppImage%20%7C%20DEB-a6e3a1?style=flat-square&logo=linux&logoColor=11111b" />
+  <a href="LICENSE"><img alt="Proprietary license" src="https://img.shields.io/badge/license-proprietary-f5c2e7?style=flat-square" /></a>
+</p>
 
-> **Project status:** Active development. Moon Dancer is proprietary, source-available software. Ready-to-install packages are distributed through [GitHub Releases](https://github.com/Aykolin/moon-dancer/releases).
+Moon Dancer is an offline-first desktop journal for Windows and Linux. It brings together personal writing, organized notes, memories, and a lunar calendar in a focused pixel-art interface inspired by Catppuccin.
 
-## Features
+No account is required. Journal entries and notes remain on the user's computer, and the core experience works without an internet connection.
 
-- Journal entries with date, title, mood, and lunar phase.
-- Categorized notes with favorites and automatic draft saving.
-- Monthly calendar with eight calculated lunar phases.
-- Local search across journal entries and notes.
-- Memories from entries written on the same date in previous years.
-- Backup and restore using the `.moonbackup` format.
-- Optional PIN lock for casual access protection.
-- Five Catppuccin terminal variants: Mocha, Lavender, Lunar Blue, Rose, and the light Latte theme.
-- Frameless floating desktop window with a transparent outer area and functional custom controls.
-- Pixelify Sans typography and custom pixel-art moon phases.
-- Always-on-top pixel-art desktop mascot with radial shortcuts.
-- Right-click mascot menu for hiding the companion or fully exiting the application.
-- Offline operation with no account or external service required.
+> **Moon Dancer 1.0 is the first stable release.** Ready-to-install packages are available on the [Releases page](https://github.com/Aykolin/moon-dancer/releases/latest).
 
-## Themes
+## Download
 
-| Theme | Description |
+| Platform | Recommended package | Alternative |
+| --- | --- | --- |
+| Windows 10 or later | `.exe` installer | `.msi` installer |
+| Linux | Portable `.AppImage` | `.deb` for Debian and Ubuntu |
+
+Download the package for your operating system from [GitHub Releases](https://github.com/Aykolin/moon-dancer/releases/latest). End users do not need Node.js, Rust, or the source code.
+
+## What Moon Dancer offers
+
+| Area | Capabilities |
 | --- | --- |
-| Mocha (Default) | Deep base with mauve and pink signal accents. |
-| Mocha Lavender | Lavender-led terminal accents. |
-| Lunar Blue | Blue and teal accents over the Mocha base. |
-| Mocha Rose | Pink and peach accents over the Mocha base. |
+| Journal | Dated entries with title, mood, content, and calculated lunar phase. |
+| Notes | Categories, favorites, search, and automatic draft saving. |
+| Lunar calendar | Monthly navigation, eight lunar phases, and direct access to entries by date. |
+| Memories | Rediscovery of journal entries and notes from the past. |
+| Backup | Export and restore through the dedicated `.moonbackup` format. |
+| Privacy | Local SQLite storage, offline operation, and no required account. |
+| Personalization | Portuguese and English, adjustable text size, reduced motion, and five Catppuccin-inspired themes. |
+| Desktop mascot | Movable, always-on-top pixel-art companion with shortcuts to Journal, Notes, and Calendar. |
 
-## Technology Stack
+## Designed as a desktop companion
 
-- [Tauri 2](https://tauri.app/) for the desktop application shell.
-- [Svelte 5](https://svelte.dev/) and TypeScript for the user interface.
-- Rust for native commands and application services.
-- SQLite for local desktop storage.
-- Vite for frontend development and production builds.
-- Vitest for automated testing.
+Moon Dancer uses a custom frameless window with native movement, resizing, minimize, maximize, and close controls. Its movable mascot remains available when the main window is hidden and can be disabled at any time in Settings.
 
-## Prerequisites
+The interface combines pixel typography, lunar artwork, transparent window edges, and five appearance options:
 
-Frontend development requires:
+- **Mocha (Default)** — deep background with mauve and lavender signals.
+- **Mocha Lavender** — a softer lavender-led variation.
+- **Lunar Blue** — blue and teal accents over the Mocha base.
+- **Mocha Rose** — warmer pink and peach accents.
+- **Light Latte** — a clear Catppuccin Latte-inspired option.
+
+## Privacy by design
+
+- Personal content is stored in a local SQLite database.
+- Search and lunar calculations run on the device.
+- The application does not require an account or cloud service.
+- Backups are created only when requested by the user.
+- The interface PIN prevents casual access but does not encrypt the database.
+- `.moonbackup` files are not encrypted and should be stored in a protected location.
+
+## Using the mascot
+
+- **Click:** open the radial shortcuts.
+- **Click and drag:** move the mascot around the desktop.
+- **Right-click:** hide only the mascot or fully quit Moon Dancer.
+- **Settings → Mascot:** enable or disable the desktop companion.
+
+## Backup and restore
+
+Moon Dancer exports journal entries and notes to a `.moonbackup` archive. Before restoring, the desktop application validates the backup format and SQLite integrity and preserves a snapshot of the current database.
+
+Backups are designed for Moon Dancer and should not be manually modified.
+
+## Development
+
+### Requirements
 
 - Node.js 20 or later.
-- pnpm.
+- pnpm 11.
+- Rust stable for native development.
+- The platform dependencies required by [Tauri 2](https://v2.tauri.app/start/prerequisites/).
 
-Desktop development additionally requires:
-
-- The stable Rust toolchain.
-- Platform-specific C++ build tools.
-- The system dependencies required by Tauri 2.
-
-Refer to the [Tauri prerequisites documentation](https://v2.tauri.app/start/prerequisites/) for operating-system-specific setup.
-
-## Getting Started
-
-Clone the repository and install the dependencies:
+### Setup
 
 ```bash
 git clone https://github.com/Aykolin/moon-dancer.git
 cd moon-dancer
-pnpm install
+pnpm install --frozen-lockfile
 ```
 
-Start the frontend development server:
+Start the browser preview:
 
 ```bash
 pnpm dev
 ```
 
-The development preview is available at `http://127.0.0.1:1420`.
-
-Browser preview data is stored in browser local storage and is separate from the SQLite database used by the desktop application.
-
-## Desktop Development
-
-After installing the Tauri and Rust prerequisites, start the native application:
+Start the native desktop application:
 
 ```bash
 pnpm tauri dev
 ```
 
-The SQLite database is created automatically in the operating system's application data directory.
+The browser preview uses local storage and cannot reproduce every native desktop behavior. Native builds use SQLite and support the independent transparent mascot window.
 
-## Available Scripts
-
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the frontend development server. |
-| `pnpm check` | Run Svelte and TypeScript diagnostics. |
-| `pnpm test` | Run the automated test suite. |
-| `pnpm build` | Create a production frontend build. |
-| `pnpm tauri dev` | Run the desktop application in development mode. |
-| `pnpm tauri build` | Build native application packages. |
-
-## Building Installers
-
-End users do not need Node.js, Rust, or the source code. Download the ready-to-install package from the repository's **Releases** page:
-
-- Windows: use the `.exe` installer. An `.msi` package is also provided.
-- Linux: use the portable `.AppImage` or the `.deb` package for Debian-based distributions.
-
-The workflow in `.github/workflows/release.yml` builds Windows and Linux packages on their native GitHub runners. It does not create commits or change the project source. To publish a version:
-
-1. Update the version in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`.
-2. Review the changes, create your release commit, and push it to GitHub.
-3. Create and push the matching tag, such as `v0.3.0` for application version `0.3.0`.
-4. Wait for the **Build desktop installers** workflow to finish.
-5. The completed release and its Windows and Linux downloads are published automatically.
-
-The workflow verifies that all three version fields and the Git tag match before building. If either platform fails, the release remains unpublished so users do not receive an incomplete version.
-
-The `executables/` directory documents the expected packages and can hold private or offline copies. Generated binaries are ignored by Git and should normally remain attached to GitHub Releases.
-
-### Local build
-
-Create a native production build with:
-
-```bash
-pnpm tauri build
-```
-
-On Windows, run the local verification and generate both installer formats with:
-
-```powershell
-pnpm desktop:build:windows
-```
-
-This command checks the required Windows toolchain, runs the project diagnostics and tests, and creates unsigned NSIS and MSI installers for local testing. It does not create a commit, tag, or GitHub Release.
-
-Generated packages are written to:
-
-```text
-src-tauri/target/release/bundle/
-```
-
-Windows builds can produce NSIS (`.exe`) and MSI installers. Linux builds produce AppImage and Debian packages. Build each platform on its corresponding operating system.
-
-Release binaries should be published through the repository's **Releases** page rather than committed directly to the source tree.
-
-## Project Structure
-
-```text
-src/
-  components/       Shared interface components and navigation
-  screens/          Application screens
-  lib/              Calendar, backup, storage, and preferences
-
-src-tauri/
-  src/lib.rs        Native data services and floating mascot window lifecycle
-  capabilities/     Tauri application permissions
-
-static/
-  brand/            Application identity assets
-  fonts/            Pixelify Sans and its OFL license
-  moons/            Pixel-art lunar phase sprites
-  mascot/           Interactive mascot artwork
-
-tests/              Automated tests
-```
-
-## Data Storage
-
-The desktop application stores journal entries and notes in a local SQLite database. The interface does not access the database file directly; operations are handled through native Tauri commands.
-
-The browser development preview uses local storage as a lightweight fallback. Browser data is not automatically migrated to the desktop database.
-
-## Desktop Mascot
-
-The native application keeps the mascot in a small transparent, always-on-top window. Closing the main window hides it while the mascot remains available on the desktop. Click the mascot for Journal, Notes, and Calendar shortcuts, or right-click it to hide only the mascot or exit Moon Dancer completely.
-
-The floating mascot can be disabled from **Settings → Mascot**. When disabled, closing the main window exits the application normally. The regular browser preview displays the mascot inside the application because browser tabs cannot create a system-level transparent companion window.
-
-## Backup and Restore
-
-The `.moonbackup` format contains the data required to restore journal entries and notes.
-
-Before restoring a backup, Moon Dancer validates its format, version, and contents. The native desktop implementation also checks SQLite integrity and preserves a snapshot of the current database before replacement.
-
-Backups are not encrypted in the current version. Store them in a protected location.
-
-## Privacy and Security
-
-- No account is required.
-- Journal entries and notes are not automatically transmitted over the internet.
-- Search is performed locally.
-- Lunar phases are calculated on the device.
-- The optional PIN lock only protects against casual interface access.
-- The PIN lock does not encrypt the SQLite database or backup files.
-
-## Testing
-
-Run all checks before submitting a change:
+### Quality checks
 
 ```bash
 pnpm check
@@ -207,24 +116,68 @@ pnpm test
 pnpm build
 ```
 
-The test suite covers lunar calculations, calendar generation, backup validation, preferences, and PIN verification.
+### Available commands
 
-## Contributions
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the frontend development server. |
+| `pnpm check` | Run Svelte and TypeScript diagnostics. |
+| `pnpm test` | Run the automated test suite. |
+| `pnpm build` | Create a production frontend build. |
+| `pnpm tauri dev` | Start the native application in development mode. |
+| `pnpm tauri build` | Build packages for the current operating system. |
+| `pnpm desktop:build:windows` | Validate and create local Windows `.exe` and `.msi` installers. |
 
-External code contributions are not currently accepted. Issues may be used to report bugs or suggest improvements, but the project owner retains sole control over the source code and repository.
+## Release process
 
-Do not redistribute, modify, relicense, or reuse the source code without prior written permission from the owner.
+Moon Dancer uses semantic versioning and publishes native packages through GitHub Actions. A tag must match the version declared in `package.json`, `src-tauri/Cargo.toml`, and `src-tauri/tauri.conf.json`.
 
-## Author
+For version 1.0.0, the release tag is:
 
-Created by **Kauany Santos**, also known as **Aykolin**.
+```text
+v1.0.0
+```
 
-- GitHub: [@Aykolin](https://github.com/Aykolin)
+Pushing the matching tag starts Windows and Linux builds. The release is published only after both platforms complete successfully.
+
+## Project structure
+
+```text
+src/
+  components/       Shared interface and navigation components
+  screens/          Journal, notes, calendar, memories, backup, and settings
+  lib/              Storage, lunar calculations, preferences, and desktop APIs
+
+src-tauri/
+  src/lib.rs        Native services, SQLite access, backup, and window lifecycle
+  capabilities/     Tauri desktop permissions
+  icons/            Application and installer icons
+
+static/
+  brand/            Moon Dancer identity assets
+  fonts/            Pixelify Sans and its OFL license
+  moons/            Pixel-art lunar phase sprites
+  mascot/           Desktop companion artwork
+
+tests/              Automated application tests
+```
+
+## Ownership and contributions
+
+Moon Dancer is an independently developed, proprietary project by **Kauany Santos (Aykolin)**. The repository is publicly visible for transparency and portfolio purposes; public visibility does not make the project open source.
+
+External code contributions are not currently accepted. Issues may be used to report bugs or suggest improvements, while the project owner retains sole control over the codebase and repository.
 
 ## License
 
 Copyright © 2026 Kauany Santos (Aykolin). All rights reserved.
 
-Moon Dancer is proprietary, source-available software. Public access to this repository does not grant permission to copy, modify, redistribute, sublicense, sell, relicense, or create derivative works from the source code, artwork, interface, documentation, or project identity.
+Official compiled releases may be used for personal, non-commercial purposes. Copying, modifying, redistributing, sublicensing, selling, relicensing, or creating derivative works from the source code, artwork, interface, documentation, or project identity requires prior written permission.
 
-Official compiled releases may be used for personal, non-commercial purposes. See the [LICENSE](LICENSE) file for the complete terms.
+See [LICENSE](LICENSE) for the complete terms.
+
+## Author
+
+Created and maintained by **Kauany Santos — Aykolin**.
+
+- GitHub: [@Aykolin](https://github.com/Aykolin)
